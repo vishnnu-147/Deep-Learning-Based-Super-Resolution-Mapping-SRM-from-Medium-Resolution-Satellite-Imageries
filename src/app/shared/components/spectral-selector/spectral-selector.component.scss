@@ -1,0 +1,165 @@
+.spectral-panel {
+  background: rgba(12, 18, 25, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+
+  .header-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .band-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--accent-cyan);
+    background: rgba(53, 213, 255, 0.08);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .rgb-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--accent-amber);
+    background: rgba(255, 179, 71, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+}
+
+.segmented-control {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  background: rgba(6, 9, 13, 0.6);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+
+  .mode-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    .mode-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: inherit;
+    }
+
+    .mode-formula {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    &:hover:not(.disabled) {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    &.active {
+      background: rgba(53, 213, 255, 0.12);
+      border-color: rgba(53, 213, 255, 0.35);
+      color: var(--accent-cyan);
+
+      .mode-formula {
+        color: rgba(53, 213, 255, 0.8);
+      }
+    }
+
+    &.disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.rgb-limitation-alert {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: rgba(255, 179, 71, 0.08);
+  border: 1px solid rgba(255, 179, 71, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.74rem;
+  color: var(--accent-amber);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Continuous NDVI Legend Bar */
+.ndvi-legend-container {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+
+  .legend-bar-wrapper {
+    margin-bottom: 8px;
+
+    .ndvi-gradient-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: linear-gradient(
+        to right,
+        #121e32 0%,    /* Water/Bare <= 0.0 */
+        #da9132 20%,   /* Low vegetation 0.0 - 0.2 */
+        #5cd05a 50%,   /* Moderate 0.2 - 0.5 */
+        #128038 100%   /* High vegetation 0.5 - 1.0 */
+      );
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .legend-scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+  }
+
+  .signal-tags {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px 8px;
+
+    .signal-tag {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      .signal-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+
+      .signal-text {
+        font-size: 0.68rem;
+        color: var(--text-secondary);
+      }
+    }
+  }
+}

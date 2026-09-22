@@ -1,0 +1,178 @@
+/* ==========================================================================
+   SATELLITE SUPER RESOLUTION - CORE DESIGN SYSTEM & TOKENS
+   Atmospheric Earth-Observation Geospatial Theme
+   ========================================================================== */
+
+@import 'maplibre-gl/dist/maplibre-gl.css';
+
+:root {
+  /* Color Palette */
+  --bg-cosmic: #06090d;
+  --surface-base: #0c1219;
+  --surface-elevated: #111923;
+  --surface-card: #141f2d;
+  --surface-hover: #192739;
+  
+  /* Accents */
+  --accent-cyan: #35d5ff;
+  --accent-cyan-glow: rgba(53, 213, 255, 0.18);
+  --accent-green: #7cffb2;
+  --accent-green-glow: rgba(124, 255, 178, 0.18);
+  --accent-amber: #ffb347;
+  --accent-red: #ff5c5c;
+  
+  /* Text & Borders */
+  --text-primary: #f4f7fa;
+  --text-secondary: #8b98a7;
+  --text-muted: #576575;
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-active: rgba(53, 213, 255, 0.35);
+  
+  /* Spatial Dimensions */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, Menlo, monospace;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-cosmic);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Subtle Geospatial Coordinate Grid Background */
+body.dark-theme {
+  background-color: var(--bg-cosmic);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(53, 213, 255, 0.04) 0%, transparent 65%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+
+/* Typography Utility Classes */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.mono-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Geospatial HUD Metric Badges */
+.hud-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  background: rgba(12, 18, 25, 0.85);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  backdrop-filter: blur(8px);
+
+  &.cyan {
+    border-color: rgba(53, 213, 255, 0.25);
+    color: var(--accent-cyan);
+  }
+
+  &.green {
+    border-color: rgba(124, 255, 178, 0.25);
+    color: var(--accent-green);
+  }
+
+  &.amber {
+    border-color: rgba(255, 179, 71, 0.25);
+    color: var(--accent-amber);
+  }
+}
+
+/* Pulse Beacon */
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+
+  &.ready {
+    background-color: var(--accent-green);
+    box-shadow: 0 0 8px var(--accent-green);
+  }
+
+  &.loading {
+    background-color: var(--accent-cyan);
+    box-shadow: 0 0 8px var(--accent-cyan);
+    animation: pulse-ring 1.4s ease-in-out infinite;
+  }
+
+  &.idle {
+    background-color: var(--text-muted);
+  }
+
+  &.error {
+    background-color: var(--accent-red);
+  }
+}
+
+@keyframes pulse-ring {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-cosmic);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface-hover);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Scan-line Effect Utility */
+.scanline-sweep {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 0%, rgba(53, 213, 255, 0.08) 50%, transparent 100%);
+    opacity: 0.8;
+    pointer-events: none;
+    animation: scan-vertical 3.5s linear infinite;
+  }
+}
+
+@keyframes scan-vertical {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}

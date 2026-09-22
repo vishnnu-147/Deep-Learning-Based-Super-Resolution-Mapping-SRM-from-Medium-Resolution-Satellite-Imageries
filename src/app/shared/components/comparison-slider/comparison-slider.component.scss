@@ -1,0 +1,218 @@
+.slider-viewport {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  background: #04070a;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  user-select: none;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &.fullscreen {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    border-radius: 0;
+  }
+}
+
+.transform-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0; left: 0;
+  transform-origin: center center;
+  transition: transform 0.05s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated; /* Sharp pixel inspection for satellite rasters */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+  }
+}
+
+.enhanced-layer {
+  pointer-events: none;
+}
+
+/* Vertical Divider & Handle */
+.divider-line {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 12px var(--accent-cyan);
+  cursor: ew-resize;
+  z-index: 10;
+  pointer-events: auto;
+
+  .slider-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #0c1219;
+    border: 2px solid var(--accent-cyan);
+    box-shadow: 0 0 16px rgba(53, 213, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    color: var(--accent-cyan);
+    cursor: ew-resize;
+    transition: transform 0.15s ease;
+
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .handle-center-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+    }
+  }
+}
+
+/* Top Overlay Labels */
+.overlay-labels {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 5;
+
+  .label-chip {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-subtle);
+
+    &.original-chip {
+      background: rgba(12, 18, 25, 0.82);
+      border-left: 3px solid #8b98a7;
+
+      .chip-title {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+      }
+      .chip-meta {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        color: var(--text-muted);
+      }
+    }
+
+    &.enhanced-chip {
+      background: rgba(12, 18, 25, 0.88);
+      border-right: 3px solid var(--accent-cyan);
+      text-align: right;
+
+      .chip-title {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--accent-cyan);
+      }
+      .chip-meta {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        color: var(--accent-green);
+      }
+    }
+  }
+}
+
+/* Bottom HUD */
+.viewer-hud {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 5;
+
+  .hud-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: rgba(12, 18, 25, 0.85);
+    border: 1px solid var(--border-subtle);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    backdrop-filter: blur(8px);
+
+    .hud-dim {
+      color: var(--text-muted);
+    }
+    .hud-val {
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+  }
+
+  .hud-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    pointer-events: auto;
+
+    .hud-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius-sm);
+      background: rgba(12, 18, 25, 0.88);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: var(--accent-cyan);
+        border-color: rgba(53, 213, 255, 0.3);
+        background: rgba(17, 25, 35, 0.95);
+      }
+    }
+  }
+}

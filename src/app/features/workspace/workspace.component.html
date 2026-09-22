@@ -1,0 +1,262 @@
+<div class="workspace-layout">
+  <!-- ====================================================================
+       LEFT COLUMN: Controls & Input
+       ==================================================================== -->
+  <aside class="col-left">
+    <!-- Upload Area / Active Dataset Card -->
+    <div class="panel-box">
+      <div class="panel-title-bar">
+        <span class="panel-heading">INPUT IMAGE</span>
+        <button class="text-btn" *ngIf="currentDataset()" (click)="resetWorkspace()">
+          Change Image
+        </button>
+      </div>
+
+      <!-- If no image loaded, show Upload Zone -->
+      <app-upload-zone
+        *ngIf="!currentDataset()"
+        (fileSelected)="onFileSelected($event)"
+        (sampleRequested)="loadSampleScene('sample-agricultural')">
+      </app-upload-zone>
+
+      <!-- If image loaded, show Compact Image Card -->
+      <div class="loaded-image-summary" *ngIf="currentDataset() as ds">
+        <div class="thumb-preview">
+          <img [src]="ds.rgbDataUrl" alt="Satellite Preview" />
+          <div class="format-chip">{{ ds.metadata.format }}</div>
+        </div>
+        <div class="summary-details">
+          <span class="filename" [title]="ds.metadata.filename">{{ ds.metadata.filename }}</span>
+          <span class="location-tag">{{ ds.locationName }}</span>
+          <div class="res-tag-row">
+            <span class="hud-pill cyan">10 m Input</span>
+            <span class="hud-pill" *ngIf="ds.metadata.isMultispectral">4-Band MSI</span>
+            <span class="hud-pill amber" *ngIf="!ds.metadata.isMultispectral">RGB Only</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sample Switcher (Available for quick exploration) -->
+    <div class="panel-box">
+      <div class="panel-title-bar">
+        <span class="panel-heading">DEMONSTRATION SAMPLES</span>
+      </div>
+      <div class="sample-btn-group">
+        <button
+          class="sample-btn"
+          [class.active]="currentDataset()?.id === 'sample-agricultural'"
+          (click)="loadSampleScene('sample-agricultural')">
+          <span class="sample-name">Castilla Agricultural Basin</span>
+          <span class="sample-sub">Pivot irrigation circles · Spain (UTM 30N)</span>
+        </button>
+        <button
+          class="sample-btn"
+          [class.active]="currentDataset()?.id === 'sample-delta'"
+          (click)="loadSampleScene('sample-delta')">
+          <span class="sample-name">Rhône Delta Estuary</span>
+          <span class="sample-sub">Wetlands & coastal zone · France (UTM 31N)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Spectral Visualization Mode Switcher -->
+    <app-spectral-selector
+      *ngIf="currentDataset()"
+      [selectedMode]="activeSpectralMode()"
+      [isMultispectral]="currentDataset()?.metadata?.isMultispectral ?? false"
+      (modeChanged)="onSpectralModeChange($event)">
+    </app-spectral-selector>
+
+    <!-- Main Action Button -->
+    <div class="action-card" *ngIf="currentDataset()">
+      <button
+        class="enhance-cta-btn"
+        [class.processing]="isProcessing()"
+        [class.completed]="isEnhanced()"
+        [disabled]="isProcessing()"
+        (click)="triggerEnhancement()">
+        <div class="btn-content">
+          <svg *ngIf="!isProcessing() && !isEnhanced()" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          <svg *ngIf="isProcessing()" class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+          </svg>
+          <svg *ngIf="!isProcessing() && isEnhanced()" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>{{ isProcessing() ? 'Enhancing...' : (isEnhanced() ? 'Re-Enhance Image' : 'Enhance Image') }}</span>
+        </div>
+      </button>
+
+      <div class="model-info-summary">
+        <div class="summary-item">
+          <span class="s-label">MODEL:</span>
+          <span class="s-val">Multispectral Deep Learning</span>
+        </div>
+        <div class="summary-item">
+          <span class="s-label">SCALE:</span>
+          <span class="s-val cyan">4×</span>
+        </div>
+        <div class="summary-item">
+          <span class="s-label">INPUT:</span>
+          <span class="s-val">10 m</span>
+        </div>
+        <div class="summary-item">
+          <span class="s-label">ESTIMATED:</span>
+          <span class="s-val green">~2.5 m</span>
+        </div>
+        <button class="model-details-link" (click)="showModelModal.set(true)">
+          Model Details →
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ====================================================================
+       CENTER COLUMN: Large Satellite Viewer & Comparison Slider
+       ==================================================================== -->
+  <main class="col-center">
+    <!-- Empty State (No image uploaded) -->
+    <div class="center-empty-state" *ngIf="!currentDataset()">
+      <div class="empty-radar-icon">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+      </div>
+      <h2 class="empty-title">Ready when you are.</h2>
+      <p class="empty-sub">Upload a satellite image to begin.</p>
+      <div class="empty-actions">
+        <button class="btn btn-primary" (click)="loadSampleScene('sample-agricultural')">
+          Try Sample Scene
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Satellite Image Viewport -->
+    <div class="viewport-card" *ngIf="currentDataset() as ds">
+      <!-- Error / Warning Banner -->
+      <div class="workspace-alert warning" *ngIf="uploadWarning()">
+        <span>⚠ {{ uploadWarning() }}</span>
+      </div>
+      <div class="workspace-alert error" *ngIf="uploadError()">
+        <span>✕ {{ uploadError() }}</span>
+      </div>
+
+      <!-- Before Enhancement: Single Viewer with Coordinate HUD -->
+      <div class="single-viewer-container" *ngIf="!isEnhanced() && !isProcessing()">
+        <img [src]="currentOriginalDisplayUrl() || ds.rgbDataUrl" alt="Input Satellite Scene" class="single-scene-img" />
+        <div class="viewport-hud-top">
+          <span class="hud-tag">INPUT RESOLUTION: 10 m</span>
+          <span class="hud-tag" *ngIf="ds.metadata.crs">CRS: {{ ds.metadata.crs }}</span>
+        </div>
+        <div class="viewport-hud-bottom">
+          <span>Click "Enhance Image" to run deep learning reconstruction pipeline.</span>
+        </div>
+      </div>
+
+      <!-- During Processing: 9-Stage Progress Pipeline -->
+      <div class="processing-overlay" *ngIf="isProcessing()">
+        <app-processing-pipeline [progress]="srService.progress()"></app-processing-pipeline>
+      </div>
+
+      <!-- After Enhancement: Draggable Comparison Slider -->
+      <div class="comparison-container" *ngIf="isEnhanced() && !isProcessing()">
+        <app-comparison-slider
+          [originalImage]="currentOriginalDisplayUrl() || ds.rgbDataUrl"
+          [enhancedImage]="currentEnhancedDisplayUrl() || ds.rgbDataUrl"
+          [enhancedLabel]="enhancedResult()?.modeLabel ?? 'ENHANCED'">
+        </app-comparison-slider>
+      </div>
+    </div>
+  </main>
+
+  <!-- ====================================================================
+       RIGHT COLUMN: Metadata, Quality Analysis & Footprint
+       ==================================================================== -->
+  <aside class="col-right" *ngIf="currentDataset() as ds">
+    <!-- Input Image Metadata Panel (Never Fabricated) -->
+    <div class="panel-box">
+      <div class="panel-title-bar">
+        <span class="panel-heading">METADATA</span>
+        <span class="status-badge ready" *ngIf="ds.metadata.isMultispectral">Image Ready</span>
+        <span class="status-badge warning" *ngIf="!ds.metadata.isMultispectral">RGB Mode</span>
+      </div>
+
+      <div class="metadata-list">
+        <div class="meta-row">
+          <span class="meta-k">Resolution</span>
+          <span class="meta-v highlight">{{ ds.metadata.spatialResolutionMeters ? ds.metadata.spatialResolutionMeters + ' m' : 'Not available' }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-k">Bands</span>
+          <span class="meta-v">{{ ds.metadata.availableBands.join(' · ') }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-k">Image Size</span>
+          <span class="meta-v">{{ ds.metadata.dimensions.width }} × {{ ds.metadata.dimensions.height }} px</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-k">CRS</span>
+          <span class="meta-v">{{ ds.metadata.crs ? ds.metadata.crs : 'Not available' }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-k">Date</span>
+          <span class="meta-v">{{ ds.metadata.acquisitionDate ? (ds.metadata.acquisitionDate | date:'yyyy-MM-dd HH:mm') : 'Not available' }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-k">Cloud Cover</span>
+          <span class="meta-v">{{ ds.metadata.cloudCoverage !== null ? (ds.metadata.cloudCoverage | number:'1.1-2') + '%' : 'Not available' }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-k">Tile ID</span>
+          <span class="meta-v">{{ ds.metadata.tileId ? ds.metadata.tileId : 'Not available' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quality Analysis & Confidence -->
+    <app-quality-panel [metrics]="qualityMetrics()"></app-quality-panel>
+
+    <!-- Geospatial Footprint Map (MapLibre GL) -->
+    <app-map-viewer
+      [crs]="ds.metadata.crs"
+      [bounds]="ds.metadata.bounds"
+      [locationName]="ds.locationName">
+    </app-map-viewer>
+
+    <!-- Export Button -->
+    <div class="export-bar" *ngIf="isEnhanced()">
+      <button class="btn btn-export" (click)="showDownloadModal.set(true)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>Export Enhanced Product</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Empty Right Column Placeholder if no image is loaded -->
+  <aside class="col-right empty-right" *ngIf="!currentDataset()">
+    <div class="placeholder-box">
+      <span class="ph-title">METADATA & FOOTPRINT</span>
+      <p class="ph-text">Raster metadata, spectral band mappings, quality validation, and geographic footprint will appear once an image is uploaded.</p>
+    </div>
+  </aside>
+</div>
+
+<!-- Download Modal -->
+<app-download-modal
+  *ngIf="showDownloadModal() && currentDataset()"
+  [dataset]="currentDataset()!"
+  [enhancedImageUrl]="currentEnhancedDisplayUrl()"
+  [metrics]="qualityMetrics()"
+  (close)="showDownloadModal.set(false)">
+</app-download-modal>
+
+<!-- Model Details Modal -->
+<app-model-details-modal
+  *ngIf="showModelModal()"
+  (close)="showModelModal.set(false)">
+</app-model-details-modal>
