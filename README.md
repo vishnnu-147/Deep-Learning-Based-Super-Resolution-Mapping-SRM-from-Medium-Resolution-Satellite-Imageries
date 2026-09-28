@@ -3,6 +3,21 @@
 > **Sharper satellite imagery. Better insight.**  
 > An AI-powered Earth-observation platform for multispectral satellite imagery enhancement, spatial analysis, and spectral inspection.
 
+[![Live Web Application](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-00d4ff?style=for-the-badge&logo=google-chrome&logoColor=white)](https://vishnnu-147.github.io/Deep-Learning-Based-Super-Resolution-Mapping-SRM-from-Medium-Resolution-Satellite-Imageries/)
+[![Angular 19](https://img.shields.io/badge/Angular-19.2-dd0031?style=for-the-badge&logo=angular)](https://angular.dev/)
+[![TensorFlow.js](https://img.shields.io/badge/AI%20Engine-TensorFlow.js-FF6F00?style=for-the-badge&logo=tensorflow)](https://www.tensorflow.org/js)
+
+---
+
+### 🌐 Live Web Application
+
+Access the fully deployed application directly in your browser:
+- **Public URL**: **[https://vishnnu-147.github.io/Deep-Learning-Based-Super-Resolution-Mapping-SRM-from-Medium-Resolution-Satellite-Imageries/](https://vishnnu-147.github.io/Deep-Learning-Based-Super-Resolution-Mapping-SRM-from-Medium-Resolution-Satellite-Imageries/)**
+- **Interactive Workspace**: [Launch Workspace](https://vishnnu-147.github.io/Deep-Learning-Based-Super-Resolution-Mapping-SRM-from-Medium-Resolution-Satellite-Imageries/workspace)
+- **Castilla Sample Scene**: [Explore Sample](https://vishnnu-147.github.io/Deep-Learning-Based-Super-Resolution-Mapping-SRM-from-Medium-Resolution-Satellite-Imageries/workspace?sample=sample-agricultural)
+- **Analytics Dashboard**: [Open Analytics](https://vishnnu-147.github.io/Deep-Learning-Based-Super-Resolution-Mapping-SRM-from-Medium-Resolution-Satellite-Imageries/analytics)
+- **History Viewer**: [Open History](https://vishnnu-147.github.io/Deep-Learning-Based-Super-Resolution-Mapping-SRM-from-Medium-Resolution-Satellite-Imageries/history)
+
 ---
 
 ## 🛰 Overview
