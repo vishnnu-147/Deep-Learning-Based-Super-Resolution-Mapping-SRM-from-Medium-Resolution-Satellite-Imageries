@@ -7,5 +7,6 @@ echo   Sharper satellite imagery. Better insight.
 echo ===================================================
 echo.
 echo Starting local application server...
+start http://localhost:4200/
 node server.js
 pause
